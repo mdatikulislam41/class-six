@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Directory, File, Paths } from 'expo-file-system';
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -90,6 +91,24 @@ export default function Index() {
     },
   ];
 
+// Download Start
+  async function downloadPdf(chapterId: number) {
+    const url = 'https://scared-chocolate-jvsmjwyi.edgeone.dev/অধ্যায়%20১_%20স্বাভাবিক%20সংখ্যা%20ও%20ভগ্নাংশ.pdf';
+    const destinationDir = new Directory(Paths.cache, 'pdfs');
+    const destinationFile = new File(Paths.cache, 'pdfs', `chapter-${chapterId}.pdf`);
+
+    try {
+      destinationDir.create({ idempotent: true });
+      const output = await File.downloadFileAsync(url, destinationFile, { idempotent: true });
+      console.log(output.exists); // true
+      console.log(output.uri); // path to the downloaded file, e.g., '${cacheDirectory}/pdfs/chapter-1.pdf'
+      alert('PDF downloaded successfully!');
+    } catch (error) {
+      console.error(error);
+      alert('Failed to download the PDF. Please try again later.');
+    }
+  }
+  // Download End
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" }} edges={["left", "right"]}>
       <StatusBar style="light" />
@@ -177,6 +196,7 @@ export default function Index() {
             <TouchableOpacity
               key={item.id}
               activeOpacity={0.8}
+              onPress={() => downloadPdf(item.id)}
               className="flex-row items-center bg-white mb-3 p-3.5 rounded-2xl border border-slate-100/80"
               style={{
                 shadowColor: "#0f172a",
