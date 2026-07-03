@@ -42,13 +42,18 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         backgroundColor: "#ffffff",
         borderTopWidth: 1,
         borderTopColor: "#f1f5f9",
-        elevation: 8,
+        elevation: 10,
         shadowColor: "#000000",
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.04,
         shadowRadius: 3,
         paddingBottom: Math.max(insets.bottom, Platform.OS === "ios" ? 24 : 12),
         paddingTop: 12,
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 10,
       }}
     >
       {state.routes.map((route: any, index: number) => {

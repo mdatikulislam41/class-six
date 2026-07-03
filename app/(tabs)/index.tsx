@@ -1,17 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
   Image,
   Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import Svg, { Path } from "react-native-svg";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import "../../global.css";
 
 // File Status Icon Component (matching the document outline + badge style)
@@ -37,6 +36,8 @@ const FileStatusIcon = ({ color, downloaded }: { color: string; downloaded: bool
 
 export default function Index() {
   const insets = useSafeAreaInsets();
+  const [headerHeight, setHeaderHeight] = React.useState(insets.top + 260);
+  const bottomTabHeight = 54 + Math.max(insets.bottom, Platform.OS === "ios" ? 24 : 12);
 
   const chapters = [
     {
@@ -90,11 +91,22 @@ export default function Index() {
   ];
 
   return (
-    <View className="flex-1 bg-slate-50">
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8fafc" }} edges={["left", "right"]}>
       <StatusBar style="light" />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: Platform.OS === "ios" ? 110 : 90 }}
+
+      {/* Header Container (Sticky / Absolutely Positioned) */}
+      <View
+        onLayout={(event) => {
+          setHeaderHeight(event.nativeEvent.layout.height);
+        }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          elevation: 10,
+        }}
       >
         {/* Header Banner with LinearGradient */}
         <LinearGradient
@@ -136,7 +148,7 @@ export default function Index() {
         </LinearGradient>
 
         {/* Wavy shape overlay below the gradient banner */}
-        <View className="w-full h-12 -mt-1 bg-transparent overflow-hidden">
+        {/* <View className="w-full h-12 -mt-1 bg-transparent overflow-hidden">
           <Svg
             height="48"
             width="100%"
@@ -148,10 +160,19 @@ export default function Index() {
               d="M0,60 C400,120 1000,10 1440,0 L1440,120 L0,120 Z"
             />
           </Svg>
-        </View>
+        </View> */}
+      </View>
 
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: headerHeight,
+          paddingBottom: bottomTabHeight + 24,
+        }}
+        className="flex-1"
+      >
         {/* Chapters Cards List */}
-        <View className="px-4 -mt-4">
+        <View className="px-4 pt-4">
           {chapters.map((item) => (
             <TouchableOpacity
               key={item.id}
@@ -189,6 +210,7 @@ export default function Index() {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
+
